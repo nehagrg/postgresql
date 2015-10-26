@@ -1,0 +1,452 @@
+ create database demo
+postgres-# createdb [demo [this is for demo]]
+postgres-# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ demo      | postgres | UTF8     | en_IN   | en_IN | 
+ disp      | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ test      | postgres | UTF8     | en_IN   | en_IN | 
+(6 rows)
+
+postgres-# \c demo
+You are now connected to database "demo" as user "postgres".
+demo-# drop database demo
+demo-# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ demo      | postgres | UTF8     | en_IN   | en_IN | 
+ disp      | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ test      | postgres | UTF8     | en_IN   | en_IN | 
+(6 rows)
+
+demo-# \c demo
+You are now connected to database "demo" as user "postgres".
+demo-# ^C
+
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+demo=# \d employee
+          Table "public.employee"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ name   | character varying(12) | 
+ id     | integer               | 
+ age    | integer               | 
+
+demo=# create table company (namevarchar(20),id int, dept varchar(20))
+demo-# /d
+demo-# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+                                         ^
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+                     ^
+demo=# create table company ( name varchar(20),cmp_id int,dept varchar(20));
+CREATE TABLE
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | company  | table | postgres
+ public | employee | table | postgres
+(2 rows)
+
+demo=# \d company
+           Table "public.company"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ name   | character varying(20) | 
+ cmp_id | integer               | 
+ dept   | character varying(20) | 
+
+demo=# \d employee
+          Table "public.employee"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ name   | character varying(12) | 
+ id     | integer               | 
+ age    | integer               | 
+
+demo=# drop table company
+demo-# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | company  | table | postgres
+ public | employee | table | postgres
+(2 rows)
+
+
+        ^
+demo=# drop table company;
+DROP TABLE
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+demo=# create schema myschema;
+CREATE SCHEMA
+demo=# create table myschema.company( name varchar(20), cmp_id int, dept varchar(20));
+CREATE TABLE
+
+demo=# select * from myschema.company;
+ name | cmp_id | dept 
+------+--------+------
+(0 rows)
+
+demo=# drop schema myschema cascade;
+NOTICE:  drop cascades to table myschema.company
+DROP SCHEMA
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+demo=# select * from myschema.company;
+ERROR:  relation "myschema.company" does not exist
+LINE 1: select * from myschema.company;
+                      ^
+demo=# create schema myschema;
+CREATE SCHEMA
+
+demo=# drop schema myschema cascade;
+NOTICE:  drop cascades to table myschema.company
+DROP SCHEMA
+demo=# \d
+            List of relations
+ Schema |     Name     | Type  |  Owner   
+--------+--------------+-------+----------
+ public | employee     | table | postgres
+ public | student_info | table | postgres
+(2 rows)
+
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+
+demo=# insert into student_info (roll,name,branch,fname) values(1,'ram','cse','maham');
+INSERT 0 1
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+
+demo=# select * from student_info;
+ roll | name | branch | fname 
+------+------+--------+-------
+    1 | ram  | cse    | maham
+(1 row)
+
+demo=# select roll,fname from student_info;
+ roll | fname 
+------+-------
+    1 | maham
+(1 row)
+
+
+demo=# select * from student_info;
+ roll | name | branch | fname 
+------+------+--------+-------
+    1 | ram  | cse    | maham
+(1 row)
+
+demo=# insert into student_info(roll,name,branch,fname)values(2,'ankit','ece','pradeep);
+demo'# select * from student_info;
+demo'# ^C
+demo=# insert into student_info(roll,name,branch,fname)values(2,'ankit','ece','pradeep);
+demo'# ^C
+demo=# insert into student_info (roll,name,branch,fname) values(2, 'ankit', 'ece', 'pradeep');
+INSERT 0 1
+demo=# select *from student_info;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    1 | ram   | cse    | maham
+    2 | ankit | ece    | pradeep
+(2 rows)
+
+demo=# insert into student_info (roll,name,branch,fname) values(3, 'arun', 'cse', 'pankaj');
+INSERT 0 1
+demo=# select *from student_info;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    1 | ram   | cse    | maham
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+(3 rows)
+
+demo=# select * from student_info where branch = 'cse';
+ roll | name | branch | fname  
+------+------+--------+--------
+    1 | ram  | cse    | maham
+    3 | arun | cse    | pankaj
+(2 rows)
+
+demo=# select (12+6) as addition;
+ addition 
+----------
+       18
+(1 row)
+
+demo=# select (12*4)as multipication;
+ multipication 
+---------------
+            48
+(1 row)
+
+demo=# select (|/25)as squareroot;
+ squareroot 
+------------
+          5
+(1 row)
+
+
+                             ^
+demo=# select count(*) from student_info;
+ count 
+-------
+     3
+(1 row)
+
+demo=# select (12-3);
+ ?column? 
+----------
+        9
+(1 row)
+
+demo=# select current_time;
+        timetz         
+-----------------------
+ 15:58:46.222258+05:30
+(1 row)
+
+demo=# select current_timestamp;
+               now                
+----------------------------------
+ 2015-10-26 15:59:14.943096+05:30
+(1 row)
+
+demo=# select * from student_info where roll>1 and branch = 'cse';
+ roll | name | branch | fname  
+------+------+--------+--------
+    3 | arun | cse    | pankaj
+(1 row)
+
+demo=# select * from student_info where roll>1 or branch = 'ece';
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+(2 rows)
+
+demo=# insert into student_info ( roll,name,fname) values(4,'bhart','gorav');
+INSERT 0 1
+demo=# select * from student_info;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    1 | ram   | cse    | maham
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+    4 | bhart |        | gorav
+(4 rows)
+
+demo=# select * from student_info where branch is null;
+ roll | name  | branch | fname 
+------+-------+--------+-------
+    4 | bhart |        | gorav
+(1 row)
+
+demo=# select * from student_info where branch is not null;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    1 | ram   | cse    | maham
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+(3 rows)
+
+
+demo=# select * from student_info where name like 't%';
+ roll | name | branch | fname 
+------+------+--------+-------
+(0 rows)
+
+demo=# select * from student_info where name like '%t';
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    2 | ankit | ece    | pradeep
+    4 | bhart |        | gorav
+(2 rows)
+
+demo=# select * from student_info where name like 'a%';
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+(2 rows)
+
+demo=# select * from  student_info where roll in (2,4);
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    2 | ankit | ece    | pradeep
+    4 | bhart |        | gorav
+(2 rows)
+
+demo=# select * from  student_info where roll not in (2,4);
+ roll | name | branch | fname  
+------+------+--------+--------
+    1 | ram  | cse    | maham
+    3 | arun | cse    | pankaj
+(2 rows)
+
+
+demo=# select * from  student_info where roll between 2 and 4;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+    4 | bhart |        | gorav
+(3 rows)
+
+
+                                   ^
+demo=# update student_info set branch = 'cse' where roll=4;
+UPDATE 1
+demo=# select * from student_info;
+ roll | name  | branch |  fname  
+------+-------+--------+---------
+    1 | ram   | cse    | maham
+    2 | ankit | ece    | pradeep
+    3 | arun  | cse    | pankaj
+    4 | bhart | cse    | gorav
+(4 rows)
+
+demo=# update student_info set fname='rakesh';
+UPDATE 4
+demo=# select * from student_info;
+ roll | name  | branch | fname  
+------+-------+--------+--------
+    1 | ram   | cse    | rakesh
+    2 | ankit | ece    | rakesh
+    3 | arun  | cse    | rakesh
+    4 | bhart | cse    | rakesh
+(4 rows)
+
+demo=# 
+demo=# select * from student_info;
+ roll | name  | branch | fname  
+------+-------+--------+--------
+    1 | ram   | cse    | rakesh
+    2 | ankit | ece    | rakesh
+    3 | arun  | cse    | rakesh
+    4 | bhart | cse    | rakesh
+(4 rows)
+
+demo=# 
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# delete from student_info where roll=4;
+DELETE 1
+demo=# select * from student_info;
+ roll | name  | branch | fname  
+------+-------+--------+--------
+    1 | ram   | cse    | rakesh
+    2 | ankit | ece    | rakesh
+    3 | arun  | cse    | rakesh
+(3 rows)
+
+demo=# insert into student_info( roll,name,branch,fname) values ( 4,'rishi','cse','shyam'),(5,'deepak','ece','hari'),(6,'dheeraj','cse','ankit'),(7,'gotam','ece','krishan'),(8,'rishab','cse','nitin'),(9,'jatin','ece','parmod'),(10,'tumul','cse','rinku');
+INSERT 0 7
+demo=# select * from student_info;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+
+                      ^
+demo=# select * from student_info where name::text like '%n';
+ roll | name  | branch | fname  
+------+-------+--------+--------
+    3 | arun  | cse    | rakesh
+    9 | jatin | ece    | parmod
+(2 rows)
+
+demo=# select * from student_info where name::text like 'n%';
+ roll | name | branch | fname 
+------+------+--------+-------
+(0 rows)
+
+demo=# select * from student_info where name::text like '%u%';
+ roll | name  | branch | fname  
+------+-------+--------+--------
+    3 | arun  | cse    | rakesh
+   10 | tumul | cse    | rinku
+(2 rows)
+
+
+                                         ^
+demo=# select * from student_info limit 5;
+ roll |  name  | branch | fname  
+------+--------+--------+--------
+    1 | ram    | cse    | rakesh
+    2 | ankit  | ece    | rakesh
+    3 | arun   | cse    | rakesh
+    4 | rishi  | cse    | shyam
+    5 | deepak | ece    | hari
+(5 rows)
+
+
+demo=# 
+
+
