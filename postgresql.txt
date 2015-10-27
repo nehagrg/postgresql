@@ -1,3 +1,372 @@
+berylsys@berylsys:~$ sudo -u postgres psql
+[sudo] password for berylsys: 
+psql (9.4.5)
+Type "help" for help.
+
+postgres=# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ demo      | postgres | UTF8     | en_IN   | en_IN | 
+ disp      | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ test      | postgres | UTF8     | en_IN   | en_IN | 
+(6 rows)
+
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# \d
+            List of relations
+ Schema |     Name     | Type  |  Owner   
+--------+--------------+-------+----------
+ public | employee     | table | postgres
+ public | student_info | table | postgres
+(2 rows)
+
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+
+demo=# select * from student_info;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info limit 3 offset 4;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+(3 rows)
+
+demo=# select * from student_info order by name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by name desc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+   10 | tumul   | cse    | rinku
+    4 | rishi   | cse    | shyam
+    8 | rishab  | cse    | nitin
+    1 | ram     | cse    | rakesh
+    9 | jatin   | ece    | parmod
+    7 | gotam   | ece    | krishan
+    6 | dheeraj | cse    | ankit
+    5 | deepak  | ece    | hari
+    3 | arun    | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+(10 rows)
+
+demo=# select * from student_info order by name,roll asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by roll, name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+
+LINE 1: select name,sum(branch) from student_info group by branch;
+                    ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+demo=# with hello as (select * from student_info where branch='cse')select * from hello;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+
+demo=# with hello as (select * from student_info where branch='cse')select name,fname from hello;
+  name   | fname  
+---------+--------
+ ram     | rakesh
+ arun    | rakesh
+ rishi   | shyam
+ dheeraj | ankit
+ rishab  | nitin
+ tumul   | rinku
+(6 rows)
+
+demo=# with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+ sum 
+-----
+  23
+(1 row)
+
+demo=# create table students (roll int ,name varchar(20),branch varchar(20),fname varchar(20));
+CREATE TABLE
+
+                                                             ^
+demo=# with moved_rows as (delete from student_info  where branch='ece'returning *)insert into students (select * from moved_rows);
+INSERT 0 4
+demo=# select * from students;
+ roll |  name  | branch |  fname  
+------+--------+--------+---------
+    2 | ankit  | ece    | rakesh
+    5 | deepak | ece    | hari
+    7 | gotam  | ece    | krishan
+    9 | jatin  | ece    | parmod
+(4 rows)
+
+demo=# select * from student_info;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+
+berylsys@berylsys:~$ sudo -u postgres psql
+[sudo] password for berylsys: 
+psql (9.4.5)
+Type "help" for help.
+
+postgres=# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ demo      | postgres | UTF8     | en_IN   | en_IN | 
+ disp      | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ test      | postgres | UTF8     | en_IN   | en_IN | 
+(6 rows)
+
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# \d
+            List of relations
+ Schema |     Name     | Type  |  Owner   
+--------+--------------+-------+----------
+ public | employee     | table | postgres
+ public | student_info | table | postgres
+(2 rows)
+
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+
+demo=# select * from student_info;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info limit 3 offset 4;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+(3 rows)
+
+demo=# select * from student_info order by name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by name desc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+   10 | tumul   | cse    | rinku
+    4 | rishi   | cse    | shyam
+    8 | rishab  | cse    | nitin
+    1 | ram     | cse    | rakesh
+    9 | jatin   | ece    | parmod
+    7 | gotam   | ece    | krishan
+    6 | dheeraj | cse    | ankit
+    5 | deepak  | ece    | hari
+    3 | arun    | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+(10 rows)
+
+demo=# select * from student_info order by name,roll asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by roll, name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+
+demo=# with hello as (select * from student_info where branch='cse')select name,fname from hello;
+  name   | fname  
+---------+--------
+ ram     | rakesh
+ arun    | rakesh
+ rishi   | shyam
+ dheeraj | ankit
+ rishab  | nitin
+ tumul   | rinku
+(6 rows)
+
+demo=# with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+ sum 
+-----
+  23
+(1 row)
+
+demo=# create table students (roll int ,name varchar(20),branch varchar(20),fname varchar(20));
+CREATE TABLE
+demo=# with moved_rows as (delete from student_info  where branch='ece'recuring *)insert into studens (select * from moved_rows);
+ERROR:  syntax error at or near "recuring"
+LINE 1: ...s as (delete from student_info  where branch='ece'recuring *...
+                                                             ^
+demo=# with moved_rows as (delete from student_info  where branch='ece'returning *)insert into studens (select * from moved_rows);
+ERROR:  relation "studens" does not exist
+LINE 1: ...t_info  where branch='ece'returning *)insert into studens (s...
+                                                             ^
+demo=# with moved_rows as (delete from student_info  where branch='ece'returning *)insert into students (select * from moved_rows);
+INSERT 0 4
+demo=# select * from students;
+ roll |  name  | branch |  fname  
+------+--------+--------+---------
+    2 | ankit  | ece    | rakesh
+    5 | deepak | ece    | hari
+    7 | gotam  | ece    | krishan
+    9 | jatin  | ece    | parmod
+(4 rows)
+
+demo=# select * from student_info;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+
  create database demo
 postgres-# createdb [demo [this is for demo]]
 postgres-# \l
@@ -448,5 +817,854 @@ demo=# select * from student_info limit 5;
 
 
 demo=# 
+berylsys@berylsys:~$ sudo -u postgres psql
+[sudo] password for berylsys: 
+psql (9.4.5)
+Type "help" for help.
+
+postgres=# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ demo      | postgres | UTF8     | en_IN   | en_IN | 
+ disp      | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ test      | postgres | UTF8     | en_IN   | en_IN | 
+(6 rows)
+
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# \d
+            List of relations
+ Schema |     Name     | Type  |  Owner   
+--------+--------------+-------+----------
+ public | employee     | table | postgres
+ public | student_info | table | postgres
+(2 rows)
+
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+
+demo=# select * from student_info;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info limit 3 offset 4;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+(3 rows)
+
+demo=# select * from student_info order by name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by name desc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+   10 | tumul   | cse    | rinku
+    4 | rishi   | cse    | shyam
+    8 | rishab  | cse    | nitin
+    1 | ram     | cse    | rakesh
+    9 | jatin   | ece    | parmod
+    7 | gotam   | ece    | krishan
+    6 | dheeraj | cse    | ankit
+    5 | deepak  | ece    | hari
+    3 | arun    | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+(10 rows)
+
+demo=# select * from student_info order by name,roll asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    9 | jatin   | ece    | parmod
+    1 | ram     | cse    | rakesh
+    8 | rishab  | cse    | nitin
+    4 | rishi   | cse    | shyam
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+demo=# select * from student_info order by roll, name asc;
+ roll |  name   | branch |  fname  
+------+---------+--------+---------
+    1 | ram     | cse    | rakesh
+    2 | ankit   | ece    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    5 | deepak  | ece    | hari
+    6 | dheeraj | cse    | ankit
+    7 | gotam   | ece    | krishan
+    8 | rishab  | cse    | nitin
+    9 | jatin   | ece    | parmod
+   10 | tumul   | cse    | rinku
+(10 rows)
+
+
+demo=# with hello as (select * from student_info where branch='cse')select * from hello;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+
+demo=# with hello as (select * from student_info where branch='cse')select name,fname from hello;
+  name   | fname  
+---------+--------
+ ram     | rakesh
+ arun    | rakesh
+ rishi   | shyam
+ dheeraj | ankit
+ rishab  | nitin
+ tumul   | rinku
+(6 rows)
+
+demo=# with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch='ece')select sum(n
+demo(# with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+demo(# ^C
+demo=#  with recursive t(n) as (select * from student_info where branch ='ece')select sum(n) from t;
+ sum 
+-----
+  23
+(1 row)
+
+demo=# create table students (roll int ,name varchar(20),branch varchar(20),fname varchar(20));
+CREATE TABLE
+                                            ^
+demo=# with moved_rows as (delete from student_info  where branch='ece'returning *)insert into students (select * from moved_rows);
+INSERT 0 4
+demo=# select * from students;
+ roll |  name  | branch |  fname  
+------+--------+--------+---------
+    2 | ankit  | ece    | rakesh
+    5 | deepak | ece    | hari
+    7 | gotam  | ece    | krishan
+    9 | jatin  | ece    | parmod
+(4 rows)
+
+demo=# select * from student_info;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+(6 rows)
+demo=# select name from student_info group by name having count (name)<2; 
+  name   
+---------
+ tumul
+ dheeraj
+ ram
+ arun
+ rishi
+ rishab
+(6 rows)
+
+demo=# select name from student_info group by name having count (name)>1;
+ name 
+------
+(0 rows)
+
+demo=# insert into student_info(roll,name,branch,fname) values(2,'tumul','cse','kanha'),(5,'dheeraj','ece','shyam');
+INSERT 0 2
+demo=# select * from student_info;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+    2 | tumul   | cse    | kanha
+    5 | dheeraj | ece    | shyam
+(8 rows)
+
+demo=# select name from student_info group by name having count (name)>1;
+  name   
+---------
+ tumul
+ dheeraj
+(2 rows)
+
+demo=# select distinct name from student_info;
+  name   
+---------
+ tumul
+ dheeraj
+ ram
+ arun
+ rishi
+ rishab
+(6 rows)
+
+
+
+
+demo=# create table student_data(roll int not null primary key, name varchar(20) not null, marks int check(marks>40), fname varchar(20));
+CREATE TABLE
+demo=# \d student_data
+        Table "public.student_data"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | not null
+ name   | character varying(20) | not null
+ marks  | integer               | 
+ fname  | character varying(20) | 
+Indexes:
+    "student_data_pkey" PRIMARY KEY, btree (roll)
+Check constraints:
+    "student_data_marks_check" CHECK (marks > 40)
+
+
+                    ^
+demo=# insert into company (id,name,age,address,salary,join_date) values(1,'gorav',29,'delhi',100000,'2001-07-13'),(2,'ankit',27,'faridabad',50000,'2004-12-13'),(3,'nitin',24,'chandigarg',20000,'2007-12-13'),(4,'bhart',21,'mumbai',10000,'201512-12'),(5,'bharat',20,'delhi',12000,'2014-12-12');
+INSERT 0 5
+demo=# select * from company;
+ id |  name  | age |  address   | salary | join_date  
+----+--------+-----+------------+--------+------------
+  1 | gorav  |  29 | delhi      | 100000 | 2001-07-13
+  2 | ankit  |  27 | faridabad  |  50000 | 2004-12-13
+  3 | nitin  |  24 | chandigarg |  20000 | 2007-12-13
+  4 | bhart  |  21 | mumbai     |  10000 | 201512-12
+  5 | bharat |  20 | delhi      |  12000 | 2014-12-12
+(5 rows)
+
+demo=# CREATE TABLE DEPARTMENT(
+demo(#    ID INT PRIMARY KEY      NOT NULL,
+demo(#    DEPT           CHAR(50) NOT NULL,
+demo(#    EMP_ID         INT      NOT NULL
+demo(# );
+CREATE TABLE
+demo=# \d departement
+Did not find any relation named "departement".
+demo=# \d DEPARTMENT
+     Table "public.department"
+ Column |     Type      | Modifiers 
+--------+---------------+-----------
+ id     | integer       | not null
+ dept   | character(50) | not null
+ emp_id | integer       | not null
+Indexes:
+    "department_pkey" PRIMARY KEY, btree (id)
+
+demo=# NSERT INTO DEPARTMENT (ID, DEPT, EMP_ID)
+
+        ^
+demo=# INSERT INTO DEPARTMENT (ID, DEPT, EMP_ID)
+VALUES (1, 'IT Billing', 1 );
+INSERT 0 1
+demo=# INSERT INTO DEPARTMENT (ID, DEPT, EMP_ID)
+demo-# VALUES (2, 'Engineering', 2 );
+INSERT 0 1
+demo=# INSERT INTO DEPARTMENT (ID, DEPT, EMP_ID)
+d
+demo=# INSERT INTO DEPARTMENT (ID, DEPT, EMP_ID)
+VALUES (3, 'finance', 5);
+INSERT 0 1
+demo=# select * from department;
+ id |                        dept                        | emp_id 
+----+----------------------------------------------------+--------
+  1 | IT Billing                                         |      1
+  2 | Engineering                                        |      2
+  3 | finance                                            |      5
+(3 rows)
+
+demo=# select emp_id,name,department,salary from company cross join department;
+demo=# 
+
+ emp_id |  name  |                         department                         | salary 
+--------+--------+------------------------------------------------------------+--------
+      1 | gorav  | (1,"IT Billing                                        ",1) | 100000
+      1 | ankit  | (1,"IT Billing                                        ",1) |  50000
+      1 | nitin  | (1,"IT Billing                                        ",1) |  20000
+      1 | bhart  | (1,"IT Billing                                        ",1) |  10000
+      1 | bharat | (1,"IT Billing                                        ",1) |  12000
+      2 | gorav  | (2,"Engineering                                       ",2) | 100000
+      2 | ankit  | (2,"Engineering                                       ",2) |  50000
+      2 | nitin  | (2,"Engineering                                       ",2) |  20000
+      2 | bhart  | (2,"Engineering                                       ",2) |  10000
+      2 | bharat | (2,"Engineering                                       ",2) |  12000
+      5 | gorav  | (3,"finance                                           ",5) | 100000
+      5 | ankit  | (3,"finance                                           ",5) |  50000
+      5 | nitin  | (3,"finance                                           ",5) |  20000
+      5 | bhart  | (3,"finance                                           ",5) |  10000
+      5 | bharat | (3,"finance                                           ",5) |  12000
+(15 rows)
+demo=# select emp_id,department,name from company inner join department on company.id=department.emp_id;
+ emp_id |                         department                         |  name  
+--------+------------------------------------------------------------+--------
+      1 | (1,"IT Billing                                        ",1) | gorav
+      2 | (2,"Engineering                                       ",2) | ankit
+      5 | (3,"finance                                           ",5) | bharat
+(3 rows)
+demo=# select emp_id,department,name from company inner join department on company.id=department.emp_id where salary>20000;
+ emp_id |                         department                         | name  
+--------+------------------------------------------------------------+-------
+      1 | (1,"IT Billing                                        ",1) | gorav
+      2 | (2,"Engineering                                       ",2) | ankit
+(2 rows)
+
+demo=# select emp_id,department,name from company inner join department on company.id=department.emp_id where salary>20000 and address='delhi';
+ emp_id |                         department                         | name  
+--------+------------------------------------------------------------+-------
+      1 | (1,"IT Billing                                        ",1) | gorav
+(1 row)
+demo=# select emp_id,dept,name from company left outer join department on company.id=department.emp_id;
+ emp_id |                        dept                        |  name  
+--------+----------------------------------------------------+--------
+      1 | IT Billing                                         | gorav
+      2 | Engineering                                        | ankit
+      5 | finance                                            | bharat
+        |                                                    | bhart
+        |                                                    | nitin
+(5 rows)
+
+demo=# insert into department(id,dept,emp_id) values (4,'hr',7);
+INSERT 0 1
+demo=# select * from department;
+ id |                        dept                        | emp_id 
+----+----------------------------------------------------+--------
+  1 | IT Billing                                         |      1
+  2 | Engineering                                        |      2
+  3 | finance                                            |      5
+  4 | hr                                                 |      7
+(4 rows)
+
+
+                                                             ^
+demo=# select emp_id,dept,name,address from company right outer join department on company.id= department.emp_id;
+ emp_id |                        dept                        |  name  |  address  
+--------+----------------------------------------------------+--------+-----------
+      1 | IT Billing                                         | gorav  | delhi
+      2 | Engineering                                        | ankit  | faridabad
+      5 | finance                                            | bharat | delhi
+      7 | hr                                                 |        | 
+(4 rows)
+
+demo=# select emp_id,dept,name,address from company right outer join department on department.emp_id=company.id;
+ emp_id |                        dept                        |  name  |  address  
+--------+----------------------------------------------------+--------+-----------
+      1 | IT Billing                                         | gorav  | delhi
+      2 | Engineering                                        | ankit  | faridabad
+      5 | finance                                            | bharat | delhi
+      7 | hr                                                 |        | 
+(4 rows)
+
+demo=# select emp_id,dept,name,address from company right outer join department on department.emp_id=company.id where salary >20000;
+ emp_id |                        dept                        | name  |  address  
+--------+----------------------------------------------------+-------+-----------
+      1 | IT Billing                                         | gorav | delhi
+      2 | Engineering                                        | ankit | faridabad
+(2 rows)
+
+demo=# select emp_id,dept,name,address from company right outer join department on department.emp_id=company.id where salary >20000 or dept='hr';
+ emp_id |                        dept                        | name  |  address  
+--------+----------------------------------------------------+-------+-----------
+      1 | IT Billing                                         | gorav | delhi
+      2 | Engineering                                        | ankit | faridabad
+      7 | hr                                                 |       | 
+(3 rows)
+
+d
+                               ^
+demo=# select  emp_id,dept,name,address from company right outer join department on department.emp_id=company.id where salary >20000 or dept='hr';
+ emp_id |                        dept                        | name  |  address  
+--------+----------------------------------------------------+-------+-----------
+      1 | IT Billing                                         | gorav | delhi
+      2 | Engineering                                        | ankit | faridabad
+      7 | hr                                                 |       | 
+(3 rows)
+
+demo=# select  emp_id,dept,name,address from company right outer join department on department.emp_id=company.id where salary >20000 or dept='hr' order by name asc;
+ emp_id |                        dept                        | name  |  address  
+--------+----------------------------------------------------+-------+-----------
+      2 | Engineering                                        | ankit | faridabad
+      1 | IT Billing                                         | gorav | delhi
+      7 | hr                                                 |       | 
+(3 rows)
+
+demo=# select  emp_id,dept,name,address from company full outer join department on department.emp_id=company.id ;
+ emp_id |                        dept                        |  name  |  address   
+--------+----------------------------------------------------+--------+------------
+      1 | IT Billing                                         | gorav  | delhi
+      2 | Engineering                                        | ankit  | faridabad
+      5 | finance                                            | bharat | delhi
+      7 | hr                                                 |        | 
+        |                                                    | bhart  | mumbai
+        |                                                    | nitin  | chandigarg
+(6 rows)
+
+demo=# create table cmp_account ( acc_id int primary key, amount int, e_id int );
+CREATE TABLE
+demo=# insert into cmp_account( acc_id,amount,e_id) values(1,200000,3),(2,100000,4),(3,23400,2);
+INSERT 0 3
+demo=# select *from cmp_account;
+ acc_id | amount | e_id 
+--------+--------+------
+      1 | 200000 |    3
+      2 | 100000 |    4
+      3 |  23400 |    2
+(3 rows)
+
+demo=# select amount,name,emp_id,dept,e_id from company inner join department on company.id=department.emp_id inner join cmp_account on department.emp_id=cmp_account.e_id;
+ amount | name  | emp_id |                        dept                        | e_id 
+--------+-------+--------+----------------------------------------------------+------
+  23400 | ankit |      2 | Engineering                                        |    2
+(1 row)
+demo=# select amount,name,emp_id,dept,e_id from company inner join department on company.id=department.emp_id  cross join cmp_account ;
+ amount |  name  | emp_id |                        dept                        | e_id 
+--------+--------+--------+----------------------------------------------------+------
+ 200000 | gorav  |      1 | IT Billing                                         |    3
+ 200000 | ankit  |      2 | Engineering                                        |    3
+ 200000 | bharat |      5 | finance                                            |    3
+ 100000 | gorav  |      1 | IT Billing                                         |    4
+ 100000 | ankit  |      2 | Engineering                                        |    4
+ 100000 | bharat |      5 | finance                                            |    4
+  23400 | gorav  |      1 | IT Billing                                         |    2
+  23400 | ankit  |      2 | Engineering                                        |    2
+  23400 | bharat |      5 | finance                                            |    2
+(9 rows)
+demo=# select amount,name,emp_id,dept,e_id from company left outer join department on company.id=department.emp_id  cross join cmp_account ;
+ amount |  name  | emp_id |                        dept                        | e_id 
+--------+--------+--------+----------------------------------------------------+------
+ 200000 | gorav  |      1 | IT Billing                                         |    3
+ 200000 | ankit  |      2 | Engineering                                        |    3
+ 200000 | bharat |      5 | finance                                            |    3
+ 200000 | bhart  |        |                                                    |    3
+ 200000 | nitin  |        |                                                    |    3
+ 100000 | gorav  |      1 | IT Billing                                         |    4
+ 100000 | ankit  |      2 | Engineering                                        |    4
+ 100000 | bharat |      5 | finance                                            |    4
+ 100000 | bhart  |        |                                                    |    4
+ 100000 | nitin  |        |                                                    |    4
+  23400 | gorav  |      1 | IT Billing                                         |    2
+  23400 | ankit  |      2 | Engineering                                        |    2
+  23400 | bharat |      5 | finance                                            |    2
+  23400 | bhart  |        |                                                    |    2
+  23400 | nitin  |        |                                                    |    2
+(15 rows)
+demo=# select amount,name,emp_id,dept,e_id from company left outer join department on company.id=department.emp_id  inner  join cmp_account on department.emp_id=cmp_account.e_id ;
+ amount | name  | emp_id |                        dept                        | e_id 
+--------+-------+--------+----------------------------------------------------+------
+  23400 | ankit |      2 | Engineering                                        |    2
+(1 row)
+
+demo=# select amount,name,emp_id,dept,e_id from company left outer join department on company.id=department.emp_id  left outer  join cmp_account on department.emp_id=cmp_account.e_id ;
+ amount |  name  | emp_id |                        dept                        | e_id 
+--------+--------+--------+----------------------------------------------------+------
+  23400 | ankit  |      2 | Engineering                                        |    2
+        | nitin  |        |                                                    |     
+        | bhart  |        |                                                    |     
+        | bharat |      5 | finance                                            |     
+        | gorav  |      1 | IT Billing                                         |     
+(5 rows)
+demo=#  SELECT EMP_ID, NAME, DEPT FROM COMPANY INNER JOIN DEPARTMENT
+demo-#         ON COMPANY.ID = DEPARTMENT.EMP_ID
+demo-#    UNION
+demo-#      SELECT EMP_ID, NAME, DEPT FROM COMPANY LEFT OUTER JOIN DEPARTMENT
+demo-#         ON COMPANY.ID = DEPARTMENT.EMP_ID;
+ emp_id |  name  |                        dept                        
+--------+--------+----------------------------------------------------
+        | nitin  | 
+      5 | bharat | finance                                           
+        | bhart  | 
+      1 | gorav  | IT Billing                                        
+      2 | ankit  | Engineering                                       
+(5 rows)
+demo=# select emp_id,name,dept from company left outer join department on  company.id=department.emp_id;
+ emp_id |  name  |                        dept                        
+--------+--------+----------------------------------------------------
+      1 | gorav  | IT Billing                                        
+      2 | ankit  | Engineering                                       
+      5 | bharat | finance                                           
+        | bhart  | 
+        | nitin  | 
+(5 rows)
+
+demo=# SELECT EMP_ID, NAME, DEPT FROM COMPANY INNER JOIN DEPARTMENT
+demo-#         ON COMPANY.ID = DEPARTMENT.EMP_ID
+demo-#    UNION ALL
+demo-#      SELECT EMP_ID, NAME, DEPT FROM COMPANY LEFT OUTER JOIN DEPARTMENT
+demo-#         ON COMPANY.ID = DEPARTMENT.EMP_ID;
+ emp_id |  name  |                        dept                        
+--------+--------+----------------------------------------------------
+      1 | gorav  | IT Billing                                        
+      2 | ankit  | Engineering                                       
+      5 | bharat | finance                                           
+      1 | gorav  | IT Billing                                        
+      2 | ankit  | Engineering                                       
+      5 | bharat | finance                                           
+        | bhart  | 
+        | nitin  | 
+(8 rows)
+
+
+demo=# select * from company as cmp;
+ id |  name  | age |  address   | salary | join_date  
+----+--------+-----+------------+--------+------------
+  1 | gorav  |  29 | delhi      | 100000 | 2001-07-13
+  2 | ankit  |  27 | faridabad  |  50000 | 2004-12-13
+  3 | nitin  |  24 | chandigarg |  20000 | 2007-12-13
+  4 | bhart  |  21 | mumbai     |  10000 | 201512-12
+  5 | bharat |  20 | delhi      |  12000 | 2014-12-12
+  6 | malik  |  23 | kashmir    |  20000 | 
+(6 rows)
+
+demo=# select * from cmp;
+ERROR:  relation "cmp" does not exist
+LINE 1: select * from cmp;
+                      ^
+demo=# select * from company;
+ id |  name  | age |  address   | salary | join_date  
+----+--------+-----+------------+--------+------------
+  1 | gorav  |  29 | delhi      | 100000 | 2001-07-13
+  2 | ankit  |  27 | faridabad  |  50000 | 2004-12-13
+  3 | nitin  |  24 | chandigarg |  20000 | 2007-12-13
+  4 | bhart  |  21 | mumbai     |  10000 | 201512-12
+  5 | bharat |  20 | delhi      |  12000 | 2014-12-12
+  6 | malik  |  23 | kashmir    |  20000 | 
+(6 rows)
+demo=# select name as n,id as identity from company;
+   n    | identity 
+--------+----------
+ gorav  |        1
+ ankit  |        2
+ nitin  |        3
+ bhart  |        4
+ bharat |        5
+ malik  |        6
+(6 rows)
+
+demo=# select n from company;
+ERROR:  column "n" does not exist
+LINE 1: select n from company;
+               ^
+demo=# select name from company;
+  name  
+--------
+ gorav
+ ankit
+ nitin
+ bhart
+ bharat
+ malik
+(6 rows)
+
+demo=# 
+demo=# select * from student_info;
+ roll |  name   | branch | fname  
+------+---------+--------+--------
+    1 | ram     | cse    | rakesh
+    3 | arun    | cse    | rakesh
+    4 | rishi   | cse    | shyam
+    6 | dheeraj | cse    | ankit
+    8 | rishab  | cse    | nitin
+   10 | tumul   | cse    | rinku
+    2 | tumul   | cse    | kanha
+    5 | dheeraj | ece    | shyam
+(8 rows)
+demo=# alter table student_info add course varchar(10);
+ALTER TABLE
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+ course | character varying(10) | 
+demo=# alter table student_info drop course;
+ALTER TABLE
+demo=# \d student_info
+        Table "public.student_info"
+ Column |         Type          | Modifiers 
+--------+-----------------------+-----------
+ roll   | integer               | 
+ name   | character varying(20) | 
+ branch | character varying(20) | 
+ fname  | character varying(20) | 
+demo=# alter table student_info add constraint prm_cns primary key (roll);
+ALTER TABLE
+demo=# alter table student_info drop constraint prm_cns;
+ALTER TABLE
+demo=# alter table student_info drop constraint nn_cns;
+ALTER TABLE
+demo=# select age(timestamp '2014-04-10',timestamp '1987-06-06');
+           age           
+-------------------------
+ 26 years 10 mons 4 days
+(1 row)
+demo=# select age(timestamp '1993-12-21');
+           age           
+-------------------------
+ 21 years 10 mons 6 days
+(1 row)
+
+demo=# select current_date;
+    date    
+------------
+ 2015-10-27
+(1 row)
+
+demo=# select current_time;
+        timetz         
+-----------------------
+ 15:34:09.275573+05:30
+(1 row)
+
+demo=# select current_timestamp;
+               now                
+----------------------------------
+ 2015-10-27 15:34:22.484957+05:30
+(1 row)
+
+demo=# select current_timestamp(3);;
+          timestamptz          
+-------------------------------
+ 2015-10-27 15:34:47.445+05:30
+(1 row)
+
+demo=# select current_time(3);;
+      timetz       
+-------------------
+ 15:35:27.51+05:30
+(1 row)
+
+demo=# select localtime;
+      time       
+-----------------
+ 15:35:35.925162
+(1 row)
+
+demo=# select localtimestamp;
+         timestamp          
+----------------------------
+ 2015-10-27 15:35:52.262264
+(1 row)
+
+demo=# select localtime(3);
+     time     
+--------------
+ 15:36:04.094
+(1 row)
+
+demo=# select localtimestamp(3);
+        timestamp        
+-------------------------
+ 2015-10-27 15:36:23.007
+(1 row)
+
+demo=# 
+demo=# select transaction_timestamp();
+      transaction_timestamp       
+----------------------------------
+ 2015-10-27 15:40:27.937405+05:30
+(1 row)
+
+demo=# select statement_timestamp();
+       statement_timestamp       
+---------------------------------
+ 2015-10-27 15:40:52.32922+05:30
+(1 row)
+
+demo=# select clock_timestamp();
+         clock_timestamp          
+----------------------------------
+ 2015-10-27 15:41:21.578284+05:30
+(1 row)
+demo=# select now();
+               now                
+----------------------------------
+ 2015-10-27 15:41:51.666163+05:30
+(1 row)
+
+demo=# select timeofday();
+              timeofday              
+-------------------------------------
+ Tue Oct 27 15:42:09.570382 2015 IST
+(1 row)
+
+demo=# SELECT date_part('day', TIMESTAMP '2001-02-16 20:38:40');
+ date_part 
+-----------
+        16
+(1 row)
+
+demo=# SELECT date_part('minute', TIMESTAMP '2001-02-16 20:38:40');
+ date_part 
+-----------
+        38
+(1 row)
+
+demo=# SELECT date_part('month', TIMESTAMP '2001-02-16 20:38:40');
+ date_part 
+-----------
+         2
+(1 row)
+
+demo=# SELECT date_part('year', TIMESTAMP '2001-02-16 20:38:40');
+ date_part 
+-----------
+      2001
+(1 row)
+
+demo=# SELECT date_trunc('year', TIMESTAMP '2001-02-16 20:38:40');
+     date_trunc      
+---------------------
+ 2001-01-01 00:00:00
+(1 row)
+
+demo=# SELECT date_trunc('second', TIMESTAMP '2001-02-16 20:38:40');
+     date_trunc      
+---------------------
+ 2001-02-16 20:38:40
+(1 row)
+
+demo=# SELECT date_trunc('minute', TIMESTAMP '2001-02-16 20:38:40');
+     date_trunc      
+---------------------
+ 2001-02-16 20:38:00
+(1 row)
+
+
+demo=#  select isfinite( date '2001-12-10');
+ isfinite 
+----------
+ t
+(1 row)
+
+demo=# select isfinite( timestamp '2001-12-10 21:21:13');
+ isfinite 
+----------
+ t
+(1 row)
+demo=# select isfinite(interval '5 seconds');
+ isfinite 
+----------
+ t
+(1 row)
+
+demo=# select * from company;
+ id |  name  | age |  address   | salary | join_date  
+----+--------+-----+------------+--------+------------
+  1 | gorav  |  29 | delhi      | 100000 | 2001-07-13
+  2 | ankit  |  27 | faridabad  |  50000 | 2004-12-13
+  3 | nitin  |  24 | chandigarg |  20000 | 2007-12-13
+  4 | bhart  |  21 | mumbai     |  10000 | 201512-12
+  5 | bharat |  20 | delhi      |  12000 | 2014-12-12
+  6 | malik  |  23 | kashmir    |  20000 | 
+(6 rows)
+
+demo=# select * from company where id in (select id from company where salary>20000);
+ id | name  | age |  address  | salary | join_date  
+----+-------+-----+-----------+--------+------------
+  1 | gorav |  29 | delhi     | 100000 | 2001-07-13
+  2 | ankit |  27 | faridabad |  50000 | 2004-12-13
+(2 rows)
+
+demo=# select age,name from company where id in ( select id from company where salary>20000);
+ age | name  
+-----+-------
+  29 | gorav
+  27 | ankit
+(2 rows)
+
+demo=# select name from company where name in ( select name from company where id>4);
+  name  
+--------
+ bharat
+ malik
+(2 rows)
+demo=# select * from company where id in (select id from company where salary>20000);
+ id | name  | age |  address  | salary | join_date  
+----+-------+-----+-----------+--------+------------
+  1 | gorav |  29 | delhi     | 100000 | 2001-07-13
+  2 | ankit |  27 | faridabad |  50000 | 2004-12-13
+(2 rows)
+
+demo=# select age,name from company where id in ( select id from company where salary>20000);
+ age | name  
+-----+-------
+  29 | gorav
+  27 | ankit
+(2 rows)
+
+demo=# select name from company where name in ( select name from company where id>4);
+  name  
+--------
+ bharat
+ malik
+(2 rows)
+demo=# update company set name ='arun' where id in(select id from company where age >21);
+UPDATE 4
+demo=# select * from company;
+ id |  name  | age |  address   | salary | join_date  
+----+--------+-----+------------+--------+------------
+  4 | bhart  |  21 | mumbai     |  10000 | 201512-12
+  5 | bharat |  20 | delhi      |  12000 | 2014-12-12
+  1 | arun   |  29 | delhi      | 100000 | 2001-07-13
+  2 | arun   |  27 | faridabad  |  50000 | 2004-12-13
+  3 | arun   |  24 | chandigarg |  20000 | 2007-12-13
+  6 | arun   |  23 | kashmir    |  20000 | 
+(6 rows)
+
+demo=# delete from  company  where id in(select id from company where age >21);DELETE 4
+demo=# select * from company;
+ id |  name  | age | address | salary | join_date  
+----+--------+-----+---------+--------+------------
+  4 | bhart  |  21 | mumbai  |  10000 | 201512-12
+  5 | bharat |  20 | delhi   |  12000 | 2014-12-12
+(2 rows)
+
+
 
 
