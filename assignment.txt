@@ -1,0 +1,410 @@
+postgres=# create database postgresassignment;
+CREATE DATABASE
+postgres=# \c postgresassignment
+You are now connected to database "postgresassignment" as user "postgres".
+USER TABLE
+---------------------------------------------------
+postgresassignment=# create table users (id int primary key,email varchar(50) not null unique,name text not null, password text not null);
+CREATE TABLE
+postgresassignment=# \d users
+             Table "public.users"
+  Column  |         Type          | Modifiers 
+----------+-----------------------+-----------
+ id       | integer               | not null
+ email    | character varying(50) | not null
+ name     | text                  | not null
+ password | text                  | not null
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (id)
+    "users_email_key" UNIQUE CONSTRAINT, btree (email)
+--------------------------------------------------------
+SKILLMUSIC TABLE
+------------------------------------------------------------
+postgresassignment=# create table skill_music( id int primary key,music_name varchar(100));
+CREATE TABLE
+postgresassignment=# \d skill_music
+           Table "public.skill_music"
+   Column   |          Type          | Modifiers 
+------------+------------------------+-----------
+ id         | integer                | not null
+ music_name | character varying(100) | 
+Indexes:
+    "skill_music_pkey" PRIMARY KEY, btree (id)
+--------------------------------------------------
+skill catogrytable
+------------------------------------------------------
+postgresassignment=# create table skill_cateogry(id int primary key , cateogry_name varchar(100));
+CREATE TABLE
+postgresassignment=# \d skill_catogery
+Did not find any relation named "skill_catogery".
+postgresassignment=# \d skill_cateogry
+           Table "public.skill_cateogry"
+    Column     |          Type          | Modifiers 
+---------------+------------------------+-----------
+ id            | integer                | not null
+ cateogry_name | character varying(100) | 
+Indexes:
+    "skill_cateogry_pkey" PRIMARY KEY, btree (id)
+------------------------------------------------
+media
+------------------------------------------------
+postgresassignment=# create table media(user_id int , facebook varchar(100),twiter varchar(100),linklned varchar(100),insta varchar(100));
+CREATE TABLE
+postgresassignment=# \d media
+             Table "public.media"
+  Column  |          Type          | Modifiers 
+----------+------------------------+-----------
+ user_id  | integer                | 
+ facebook | character varying(100) | 
+ twiter   | character varying(100) | 
+ linklned | character varying(100) | 
+ insta    | character varying(100) | 
+---------------------------------------------------------
+catogry user table
+--------------------------------------------------------
+
+postgresassignment=# create table cateogryuser(c_id int,user_id int);
+CREATE TABLE
+postgresassignment=# insert into follow(follower_id,follow_id) values (1,6),(1,4),(2,5),(10,5),(2,1),(9,1),(6,4);
+INSERT 0 7
+postgresassignment=# select * from follow;
+ follower_id | follow_id 
+-------------+-----------
+           1 |         6
+           1 |         4
+           2 |         5
+          10 |         5
+           2 |         1
+           9 |         1
+           6 |         4
+(7 rows)
+
+postgresassignment=# \d
+             List of relations
+ Schema |      Name      | Type  |  Owner   
+--------+----------------+-------+----------
+ public | cateogryuser   | table | postgres
+ public | follow         | table | postgres
+ public | media          | table | postgres
+ public | musicuser      | table | postgres
+ public | skill_cateogry | table | postgres
+ public | skill_music    | table | postgres
+ public | users          | table | postgres
+(7 rows)
+postgresassignment=# insert into users(id,email,name,password) values (1,'neha@facebook.com','nehagarg','nehagarg'),(2,'bharat@twiter.com','bharatmangla','bharat'),(3,'malik@liknkend.com','maliktajamul','tajamul'),(4,'surbhi@insta.com','surbhivj','surbhi'),(5,'aishwarya@facebook.com','aishwarya','sharma');
+INSERT 0 5
+postgresassignment=# insert into users(id,email,name,password) values (6,'arun@facebook.com','arun','arungoyal'),(7,'nirbhay@twiter.com','nirbhay','goyal'),(8,'praveen@liknkend.com','praveen','praveen'),(9,'bhawana@insta.com','bhawana','bhawana'),(10,'malik@facebook.com','malik','shafayat');
+INSERT 0 5
+postgresassignment=# select* from users;
+ id |         email          |     name     | password  
+----+------------------------+--------------+-----------
+  1 | neha@facebook.com      | nehagarg     | nehagarg
+  2 | bharat@twiter.com      | bharatmangla | bharat
+  3 | malik@liknkend.com     | maliktajamul | tajamul
+  4 | surbhi@insta.com       | surbhivj     | surbhi
+  5 | aishwarya@facebook.com | aishwarya    | sharma
+  6 | arun@facebook.com      | arun         | arungoyal
+  7 | nirbhay@twiter.com     | nirbhay      | goyal
+  8 | praveen@liknkend.com   | praveen      | praveen
+  9 | bhawana@insta.com      | bhawana      | bhawana
+ 10 | malik@facebook.com     | malik        | shafayat
+(10 rows)
+postgresassignment=# insert into skill_music(id,music_name) values (1,'electronic'),(2,'folk'),(3,'hiphop'),(4,'jazz'),(5,'latin'),(6,'pop');
+INSERT 0 6
+postgresassignment=# select * from skill_music;
+ id | music_name 
+----+------------
+  1 | electronic
+  2 | folk
+  3 | hiphop
+  4 | jazz
+  5 | latin
+  6 | pop
+(6 rows)
+postgresassignment=# insert into skill_cateogry(id,cateogry_name) values (1,'sports'),(2,'technical'),(3,'doctor'),(4,'management'),(5,'politics'),(6,'others');
+INSERT 0 6
+postgresassignment=# select * from skill_cateogry;
+ id | cateogry_name 
+----+---------------
+  1 | sports
+  2 | technical
+  3 | doctor
+  4 | management
+  5 | politics
+  6 | others
+(6 rows)
+postgresassignment=# insert into media( user_id,twiter)values (2,'bharat@twiter.com');
+INSERT 0 1
+postgresassignment=# insert into media(user_id,facebook)values (6,'arun@facebook.com');
+INSERT 0 1
+postgresassignment=# insert into media (user_id,insta)values(9,'bhawana@insta.com');
+INSERT 0 1
+postgresassignment=# insert into media (user_id,linklned)values(3,'malik@liknkend.com');    
+INSERT 0 1
+postgresassignment=# insert into media(user_id,facebook)values (1,'neha@facebook.com'); 
+INSERT 0 1
+postgresassignment=# \d
+postgresassignment=# select * from media;
+ user_id |     facebook      |      twiter       |      linklned      |       insta       
+---------+-------------------+-------------------+--------------------+-------------------
+       2 |                   | bharat@twiter.com |                    | 
+       6 | arun@facebook.com |                   |                    | 
+       9 |                   |                   |                    | bhawana@insta.com
+       3 |                   |                   | malik@liknkend.com | 
+       1 | neha@facebook.com |                   |                    | 
+(5 rows)
+
+ostgresassignment=# insert into musicuser(m_id,user_id) values(1,2),(3,4),(4,7),(2,8),(5,9),(6,3);
+INSERT 0 6
+postgresassignment=# select * from musicuser;
+ m_id | user_id 
+------+---------
+    1 |       2
+    3 |       4
+    4 |       7
+    2 |       8
+    5 |       9
+    6 |       3
+(6 rows)
+postgresassignment=# insert into follow(follower_id,follow_id) values (1,6),(1,4),(2,5),(10,5),(2,1),(9,1),(6,4);
+INSERT 0 7
+postgresassignment=# select * from follow;
+ follower_id | follow_id 
+-------------+-----------
+           1 |         6
+           1 |         4
+           2 |         5
+          10 |         5
+           2 |         1
+           9 |         1
+           6 |         4
+(7 rows)
+postgresassignment=# alter table users add city varchar(25);
+ALTER TABLE
+postgresassignment=# select * from users;
+ id |         email          |     name     | password  | city 
+----+------------------------+--------------+-----------+------
+  1 | neha@facebook.com      | nehagarg     | nehagarg  | 
+  2 | bharat@twiter.com      | bharatmangla | bharat    | 
+  3 | malik@liknkend.com     | maliktajamul | tajamul   | 
+  4 | surbhi@insta.com       | surbhivj     | surbhi    | 
+  5 | aishwarya@facebook.com | aishwarya    | sharma    | 
+  6 | arun@facebook.com      | arun         | arungoyal | 
+  7 | nirbhay@twiter.com     | nirbhay      | goyal     | 
+  8 | praveen@liknkend.com   | praveen      | praveen   | 
+  9 | bhawana@insta.com      | bhawana      | bhawana   | 
+ 10 | malik@facebook.com     | malik        | shafayat  | 
+(10 rows)
+postgresassignment=# update  users set city='ballabgarh' where id=1;
+UPDATE 1
+postgresassignment=# update  users set city='delhi' where id=2;
+UPDATE 1
+postgresassignment=# update  users set city='noida' where id=3;
+UPDATE 1
+postgresassignment=# update  users set city='faridabad' where id=4;
+UPDATE 1
+postgresassignment=# update  users set city='banglore' where id=5;
+UPDATE 1
+postgresassignment=# update  users set city='firozpur' where id=6;
+UPDATE 1
+postgresassignment=# update  users set city='palwal' where id=7;
+UPDATE 1
+postgresassignment=# update  users set city='tkd' where id=8;
+UPDATE 1
+postgresassignment=# update  users set city='kanpur' where id=9;
+UPDATE 1
+postgresassignment=# update  users set city='kashmir' where id=10;
+UPDATE 1
+postgresassignment=# select * from users;
+ id |         email          |     name     | password  |    city    
+----+------------------------+--------------+-----------+------------
+  1 | neha@facebook.com      | nehagarg     | nehagarg  | ballabgarh
+  2 | bharat@twiter.com      | bharatmangla | bharat    | delhi
+  3 | malik@liknkend.com     | maliktajamul | tajamul   | noida
+  4 | surbhi@insta.com       | surbhivj     | surbhi    | faridabad
+  5 | aishwarya@facebook.com | aishwarya    | sharma    | banglore
+  6 | arun@facebook.com      | arun         | arungoyal | firozpur
+  7 | nirbhay@twiter.com     | nirbhay      | goyal     | palwal
+  8 | praveen@liknkend.com   | praveen      | praveen   | tkd
+  9 | bhawana@insta.com      | bhawana      | bhawana   | kanpur
+ 10 | malik@facebook.com     | malik        | shafayat  | kashmir
+(10 rows)
+
+postgresassignment=# select * from users;
+ id |         email          |     name     | password  |    city    
+----+------------------------+--------------+-----------+------------
+  1 | neha@facebook.com      | nehagarg     | nehagarg  | ballabgarh
+  2 | bharat@twiter.com      | bharatmangla | bharat    | delhi
+  3 | malik@liknkend.com     | maliktajamul | tajamul   | noida
+  4 | surbhi@insta.com       | surbhivj     | surbhi    | faridabad
+  5 | aishwarya@facebook.com | aishwarya    | sharma    | banglore
+  6 | arun@facebook.com      | arun         | arungoyal | firozpur
+  7 | nirbhay@twiter.com     | nirbhay      | goyal     | palwal
+  8 | praveen@liknkend.com   | praveen      | praveen   | tkd
+  9 | bhawana@insta.com      | bhawana      | bhawana   | kanpur
+ 10 | malik@facebook.com     | malik        | shafayat  | kashmir
+(10 rows)
+
+-----*********************************************************************************************************************-----------------------
+
+queries
+
+1)postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
+ numberoffollower |     name     
+------------------+--------------
+                0 | praveen
+                2 | aishwarya
+                0 | harsha
+                0 | hana
+                0 | maliktajamul
+                0 | nirbhay
+                0 | bhawana
+                4 | surbhivj
+                1 | arun
+                0 | bharatmangla
+                2 | nehagarg
+                0 | malik
+(12 rows)
+
+2)postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
+ numberoffollower |     name     
+------------------+--------------
+                0 | praveen
+                2 | aishwarya
+                0 | harsha
+                0 | hana
+                0 | maliktajamul
+                0 | nirbhay
+                0 | bhawana
+                4 | surbhivj
+                1 | arun
+                0 | bharatmangla
+                2 | nehagarg
+                0 | malik
+(12 rows)
+
+3)postgresassignment=# select distinct name from users order by name;
+    name    
+--------------
+aishwarya
+arun
+bharatmangla
+bhawana
+malik
+maliktajamul
+nehagarg
+nirbhay
+praveen
+surbhivj
+(10 rows)postgresassignment=# select distinct name from users order by name desc;
+    name    
+--------------
+surbhivj
+praveen
+nirbhay
+nehagarg
+maliktajamul
+malik
+bhawana
+bharatmangla
+arun
+aishwarya
+(10 rows) 
+
+4)stgresassignment=# select * from users limit 2 offset 4;
+ id |         email          |   name    | password  |   city   
+----+------------------------+-----------+-----------+----------
+  5 | aishwarya@facebook.com | aishwarya | sharma    | banglore
+  6 | arun@facebook.com      | arun      | arungoyal | firozpur
+
+(2 rows)
+------------------------------------------------------------------
+  name    | cateogry_name 
+-----------+---------------
+ malik     | sports
+ praveen   | management
+ nirbhay   | technical
+ harsha    | sports
+ harsha    | technical
+ nirbhay   | sports
+ surbhivj  | sports
+ malik     | politics
+ aishwarya | sports
+ arun      | sports
+ arun      | doctor
+ nehagarg  | others
+(12 rows)
+
+5)postgresassignment=#  select cateogry_name from users inner join  cateogryuser on users.id=cateogryuser.user_id  inner join skill_cateogry on cateogryuser.c_id=skill_cateogry.id group by skill_cateogry.cateogry_name having count (cateogry_name)>5;
+ cateogry_name 
+---------------
+ sports
+(1 row)
+
+
+6) postgresassignment=# select name from users  inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id where music_name in ( select music_name from users inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id group by  skill_music.music_name having count (music_name)>3);
+     name     
+--------------
+ bharatmangla
+ praveen
+ surbhivj
+ nirbhay
+ bhawana
+ arun
+ nirbhay
+ bhawana
+(8 rows)
+
+
+7)postgresassignment=# select count(follower_id),city from users inner join follow on users.id=follow.follow_id group by users.city;
+ count |    city    
+-------+------------
+     2 | faridabad
+     1 | firozpur
+     2 | ballabgarh
+     2 | banglore
+(4 rows)
+
+
+
+8)postgresassignment=# create table followercount (numberoffollower int ,name varchar(100));
+CREATE TABLE
+postgresassignment=# with move as (select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name ) insert into followercount (select * from move);
+INSERT 0 12
+postgresassignment=# select * from followercount;
+ numberoffollower |     name     
+------------------+--------------
+                0 | praveen
+                2 | aishwarya
+                0 | harsha
+                0 | hana
+                0 | maliktajamul
+                0 | nirbhay
+                0 | bhawana
+                4 | surbhivj
+                1 | arun
+                0 | bharatmangla
+                2 | nehagarg
+                0 | malik
+(12 rows)
+postgresassignment=# select max(numberoffollower) from followercount;
+ max 
+-----
+   4
+(1 row)
+
+
+or
+postgresassignment=# select max(numberoffollower) from (select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name ) as foo  ;
+ max 
+-----
+   4
+(1 row)
+
+
+10)postgresassignment=# select count(follower_id)as numberoffollower,city from users left outer join follow on users.id=follow.follow_id group by users.city having count(follower_id)>3;
+ numberoffollower |   city    
+------------------+-----------
+                4 | faridabad
+(1 row)
+
