@@ -324,42 +324,38 @@ stgresassignment=# select * from users limit 2 offset 4;
 (2 rows)
 *****************************************************************************************************************************************************
 ------------------------------------------------------------------
-  name    | cateogry_name 
------------+---------------
- malik     | sports
- praveen   | management
- nirbhay   | technical
- harsha    | sports
- harsha    | technical
- nirbhay   | sports
- surbhivj  | sports
- malik     | politics
- aishwarya | sports
- arun      | sports
- arun      | doctor
- nehagarg  | others
+ cateogry_name |     name     
+---------------+--------------
+ sports        | bharatmangla
+ sports        | surbhivj
+ sports        | aishwarya
+ sports        | arun
+ sports        | praveen
+ technical     | surbhivj
+ management    | aishwarya
+ technical     | aishwarya
+ technical     | arun
+ management    | aishwarya
+ management    | praveen
+ management    | bhawana
 (12 rows)
+
 5)Get the common name of categories of 5 users
-postgresassignment=#  select cateogry_name from users inner join  cateogryuser on users.id=cateogryuser.user_id  inner join skill_cateogry on cateogryuser.c_id=skill_cateogry.id group by skill_cateogry.cateogry_name having count (cateogry_name)>5;
+postgresassignment=# select cateogry_name from users inner join cateogryuser on cateogryuser.user_id=users.id inner join skill_cateogry on skill_cateogry.id=cateogryuser.c_id where name in ( select name from users inner join cateogryuser on cateogryuser.user_id=users.id inner join skill_cateogry on skill_cateogry.id=cateogryuser.c_id) group by skill_cateogry.cateogry_name having count(cateogry_name)>=5;
  cateogry_name 
 ---------------
  sports
 (1 row)
 
+
 ************************************************************************************************************************************************************
 6)Get the users where musics are more than 3 for a user
- postgresassignment=# select name from users  inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id where music_name in ( select music_name from users inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id group by  skill_music.music_name having count (music_name)>3);
-     name     
---------------
- bharatmangla
- praveen
+ postgresassignment=# select name from users  inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id where music_name in ( select music_name from users inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id group by  skill_music.music_name )group by users.name having count (name)>3;
+   name   
+----------
  surbhivj
- nirbhay
- bhawana
- arun
- nirbhay
- bhawana
-(8 rows)
+(1 row)
+
 
 *********************************************************************************************************************************************************
 7)list the count of followers according to city
@@ -412,10 +408,12 @@ postgresassignment=# select users.name ,count(follower_id)as count_max from foll
 (1 row)
 *************************************************************************************************************************************************************************
 
-10)
-postgresassignment=# select count(follower_id)as numberoffollower,city from users left outer join follow on users.id=follow.follow_id group by users.city having count(follower_id)>3;
- numberoffollower |   city    
-------------------+-----------
-                4 | faridabad
-(1 row)
+10)Get the records of a users grouped according to city having count of followers more than 3 
+postgresassignment=# select * from users where city in ( select city from users inner join follow on follow.follow_id=users.id where follow_id in (select follow_id from users inner join follow on follow.follow_id=users.id group by follow.follow_id having count(follow_id)>3));
+ id |         email          |   name    | password |   city    
+----+------------------------+-----------+----------+-----------
+  4 | surbhi@insta.com       | surbhivj  | surbhi   | faridabad
+  5 | aishwarya@facebook.com | aishwarya | sharma   | banglore
+(2 rows)
+
 ********************************************************************************************************************************************************************
