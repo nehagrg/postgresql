@@ -196,9 +196,9 @@ postgresassignment=# select * from users;
  10 | malik@facebook.com     | malik        | shafayat  | 
 (10 rows)
 postgresassignment=# update  users set city='ballabgarh' where id=1;
+UPDATE 1update  users set city='delhi' where id=2;
 UPDATE 1
-postgresassignment=# update  users set city='delhi' where id=2;
-UPDATE 1
+postgresassignment=# 
 postgresassignment=# update  users set city='noida' where id=3;
 UPDATE 1
 postgresassignment=# update  users set city='faridabad' where id=4;
@@ -248,8 +248,9 @@ postgresassignment=# select * from users;
 -----*********************************************************************************************************************-----------------------
 
 queries
-
-1)postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
+*************************************************************************************************************************************************88
+1)get me the name of the user start with ha
+postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
  numberoffollower |     name     
 ------------------+--------------
                 0 | praveen
@@ -265,8 +266,9 @@ queries
                 2 | nehagarg
                 0 | malik
 (12 rows)
-
-2)postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
+**************************************************************************************************************************************************
+2)Get me count of followers for every user
+postgresassignment=# select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name;
  numberoffollower |     name     
 ------------------+--------------
                 0 | praveen
@@ -282,8 +284,9 @@ queries
                 2 | nehagarg
                 0 | malik
 (12 rows)
-
-3)postgresassignment=# select distinct name from users order by name;
+*************************************************************************************************************************************
+3)Get distinct name in alphabetical order
+postgresassignment=# select distinct name from users order by name;
     name    
 --------------
 aishwarya
@@ -310,14 +313,16 @@ bharatmangla
 arun
 aishwarya
 (10 rows) 
-
-4)stgresassignment=# select * from users limit 2 offset 4;
+************************************************************************************************************************************************
+4)Get me the record 5 and 6 of a table without using id of that tabl
+stgresassignment=# select * from users limit 2 offset 4;
  id |         email          |   name    | password  |   city   
 ----+------------------------+-----------+-----------+----------
   5 | aishwarya@facebook.com | aishwarya | sharma    | banglore
   6 | arun@facebook.com      | arun      | arungoyal | firozpur
 
 (2 rows)
+*****************************************************************************************************************************************************
 ------------------------------------------------------------------
   name    | cateogry_name 
 -----------+---------------
@@ -334,15 +339,16 @@ aishwarya
  arun      | doctor
  nehagarg  | others
 (12 rows)
-
-5)postgresassignment=#  select cateogry_name from users inner join  cateogryuser on users.id=cateogryuser.user_id  inner join skill_cateogry on cateogryuser.c_id=skill_cateogry.id group by skill_cateogry.cateogry_name having count (cateogry_name)>5;
+5)Get the common name of categories of 5 users
+postgresassignment=#  select cateogry_name from users inner join  cateogryuser on users.id=cateogryuser.user_id  inner join skill_cateogry on cateogryuser.c_id=skill_cateogry.id group by skill_cateogry.cateogry_name having count (cateogry_name)>5;
  cateogry_name 
 ---------------
  sports
 (1 row)
 
-
-6) postgresassignment=# select name from users  inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id where music_name in ( select music_name from users inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id group by  skill_music.music_name having count (music_name)>3);
+************************************************************************************************************************************************************
+6)Get the users where musics are more than 3 for a user
+ postgresassignment=# select name from users  inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id where music_name in ( select music_name from users inner join  musicuser on users.id=musicuser.user_id inner join skill_music on skill_music.id=musicuser.m_id group by  skill_music.music_name having count (music_name)>3);
      name     
 --------------
  bharatmangla
@@ -355,22 +361,28 @@ aishwarya
  bhawana
 (8 rows)
 
-
-7)postgresassignment=# select count(follower_id),city from users inner join follow on users.id=follow.follow_id group by users.city;
+*********************************************************************************************************************************************************
+7)list the count of followers according to city
+postgresassignment=# select count(follower_id),city from users left outer join follow on users.id=follow.follow_id group by users.city;
  count |    city    
 -------+------------
-     2 | faridabad
-     1 | firozpur
+     4 | faridabad
+     0 | palwal
+     3 | firozpur
+     0 | delhi
      2 | ballabgarh
-     2 | banglore
-(4 rows)
+     0 | kanpur
+     1 | tkd
+     0 | noida
+     0 | kashmir
+     4 | banglore
+(10 rows)
 
 
 
-8)postgresassignment=# create table followercount (numberoffollower int ,name varchar(100));
-CREATE TABLE
-postgresassignment=# with move as (select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name ) insert into followercount (select * from move);
-INSERT 0 12
+
+**************************************************************************************************************************************************************
+
 postgresassignment=# select * from followercount;
  numberoffollower |     name     
 ------------------+--------------
@@ -386,25 +398,24 @@ postgresassignment=# select * from followercount;
                 0 | bharatmangla
                 2 | nehagarg
                 0 | malik
-(12 rows)
-postgresassignment=# select max(numberoffollower) from followercount;
- max 
------
-   4
+8 )Find the user having highest  number of followerspostgresassignment=# select users.name ,count(follower_id)as count_max from follow inner join users on follow.follow_id=users.id group by name order by count_max desc limit 1 ;
+   name    | count_max 
+-----------+-----------
+ aishwarya |         4
 (1 row)
-
-
-or
-postgresassignment=# select max(numberoffollower) from (select count(follower_id)as numberoffollower,name from users left outer join follow on users.id=follow.follow_id group by users.name ) as foo  ;
- max 
------
-   4
+**************************************************************************************************************************************************************************
+9) Find the user having third highest  number of followers
+postgresassignment=# select users.name ,count(follower_id)as count_max from follow inner join users on follow.follow_id=users.id group by name order by count_max desc limit 1 offset 3;
+   name   | count_max 
+----------+-----------
+ nehagarg |         2
 (1 row)
+*************************************************************************************************************************************************************************
 
-
-10)postgresassignment=# select count(follower_id)as numberoffollower,city from users left outer join follow on users.id=follow.follow_id group by users.city having count(follower_id)>3;
+10)
+postgresassignment=# select count(follower_id)as numberoffollower,city from users left outer join follow on users.id=follow.follow_id group by users.city having count(follower_id)>3;
  numberoffollower |   city    
 ------------------+-----------
                 4 | faridabad
 (1 row)
-
+********************************************************************************************************************************************************************
